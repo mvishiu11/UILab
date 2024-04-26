@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "uilab"
+version = "0.1.0"
+description = ""
+authors = ["mvishiu11 <116217532+mvishiu11@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.33.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
