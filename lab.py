@@ -1,50 +1,59 @@
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, time
+import pytz
 
 def main():
     st.title("Job Offer Form")
-    
-    default_dept = ["Finance", "IT", "HR", "Sales", "Marketing", "Other"]
-
-    # Initialize session state to hold the list of departments
-    if 'departments' not in st.session_state:
-        st.session_state['departments'] = default_dept
 
     with st.form(key='job_offer_form'):
         # Job Title
         job_title = st.text_input("Job Title", "", help="Enter the job title. Maximum 100 characters.")
-        
+
         # Job Description
         job_description = st.text_area("Job Description", "", help="Provide a detailed job description. Maximum 1000 characters.")
 
         # Department Name
-        department_name = st.selectbox("Department Name", options=st.session_state['departments'], help="Select the department from the dropdown list or add a new one below.")
+        department_name = st.selectbox("Department Name", options=["Finance", "IT", "HR", "Sales", "Marketing", "Other"], help="Select the department from the dropdown list.")
 
         new_dept = None
-        # Add new department field shows only if 'Other' is selected
         if department_name == "Other":
-            new_dept = st.text_input("Other Department", help="Type here to add a new department to the list. Maximum 50 characters.")
-            
+            new_dept = st.text_input("New Department Name", help="Enter the new department name. Maximum 50 characters.")
+            st.rerun()
+        
         # Number of Available Positions
         num_positions = st.number_input("Number of Available Positions", min_value=1, step=1, format="%d", help="Enter the number of positions available. Must be a positive integer.")
 
-        # Salary Range
-        salary_from = st.number_input("Salary From ($)", min_value=0.0, step=1000.0, format="%.2f", help="Minimum salary for the position. Must be a positive number.")
-        salary_to = st.number_input("Salary To ($)", min_value=0.0, step=1000.0, format="%.2f", help="Maximum salary for the position. Must be greater than or equal to the Salary From.")
+        # Salary Range and Currency
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            salary_from = st.number_input("Salary From", help="Minimum salary for the position.")
+        with col2:
+            salary_to = st.number_input("Salary To", help="Maximum salary for the position.")
+        with col3:
+            currency = st.selectbox("Currency", ["USD", "EUR", "GBP"], help="Choose the currency for the salary.")
 
         # Start Date
         start_date = st.date_input("Start Date", min_value=datetime.today(), help="Select the start date for the position. Dates in the past are not allowed.")
 
-        # Ability to Attach Promotion Graphic Files
-        promotion_graphics = st.file_uploader("Attach Promotion Graphic Files", accept_multiple_files=True, type=['png', 'jpg', 'jpeg'],
-                                            help="Attach promotional graphics. Only PNG, JPG, JPEG files are accepted. Recommended size limit per file is 5MB.")
+        # Working Hours
+        col1, col2, col3 = st.columns([1,1,2])
+        with col1:
+            opening_hours = st.time_input("Opening Hours", value=time(9, 0), help="Select opening hour.")
+        with col2:
+            closing_hours = st.time_input("Closing Hours", value=time(17, 0), help="Select closing hour.")
+        with col3:
+            timezone = st.selectbox("Timezone", pytz.all_timezones, index=pytz.all_timezones.index('UTC'), help="Select the timezone for the working hours.")
 
         # Contact Information
         contact_email = st.text_input("Contact Email", "", help="Enter a valid email address.")
-        contact_phone = st.text_input("Contact Phone Number", "", help="Enter the phone number. Include country code if applicable.")
-        office_hours = st.text_input("Office Working Hours", "", help="Enter office working hours in format '9:00 AM - 5:00 PM'.")
+        
+        col5, col4 = st.columns([1,3])
+        with col4:
+            contact_name = st.text_input("Contact Number", "", help="Enter the phone number in format 111-222-333")
+        with col5:
+            phone_extension = st.text_input("Phone Extension", "", help="Enter the phone extension if any.")
 
-    # Submit Button
+        # Submit Button
         submit_button = st.form_submit_button("Submit Job Offer")
 
     if submit_button:
